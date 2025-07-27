@@ -1,44 +1,27 @@
+
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
+import { PageHubLogo } from "@/components/shared/PageHubLogo";
 
 export default function LandingPage() {
   return (
     <div className="flex flex-col min-h-screen">
       <header className="px-4 lg:px-6 h-14 flex items-center">
         <Link href="#" className="flex items-center justify-center" prefetch={false}>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="h-6 w-6"
-          >
-            <rect width="18" height="18" x="3" y="3" rx="2" />
-            <path d="M7 3v18" />
-            <path d="M12 3v18" />
-            <path d="M17 3v18" />
-            <path d="M3 7h18" />
-            <path d="M3 12h18" />
-            <path d="M3 17h18" />
-          </svg>
+          <PageHubLogo />
           <span className="sr-only">PageHub</span>
         </Link>
-        <nav className="ml-auto flex gap-4 sm:gap-6">
-          <Link href="/login" className="text-sm font-medium hover:underline underline-offset-4" prefetch={false}>
-            Login
-          </Link>
-          <Link
-            href="/signup"
-            className="inline-flex h-9 items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
-            prefetch={false}
-          >
-            Sign Up
-          </Link>
+        <nav className="ml-auto flex items-center gap-4 sm:gap-6">
+          <Button variant="ghost" asChild>
+            <Link href="/login" prefetch={false}>
+              Login
+            </Link>
+          </Button>
+          <Button asChild>
+            <Link href="/signup" prefetch={false}>
+              Sign Up
+            </Link>
+          </Button>
         </nav>
       </header>
       <main className="flex-1">
@@ -55,13 +38,14 @@ export default function LandingPage() {
                 </p>
               </div>
               <div className="space-x-4">
-                <Link
-                  href="/signup"
-                  className="inline-flex h-10 items-center justify-center rounded-md bg-primary px-8 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
-                  prefetch={false}
-                >
-                  Get Started
-                </Link>
+                <Button asChild size="lg">
+                    <Link
+                    href="/signup"
+                    prefetch={false}
+                    >
+                    Get Started
+                    </Link>
+                </Button>
               </div>
             </div>
           </div>

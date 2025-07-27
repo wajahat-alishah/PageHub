@@ -1,3 +1,4 @@
+
 'use client';
 import { useState } from 'react';
 import {
@@ -7,6 +8,7 @@ import {
   SidebarContent,
   SidebarTrigger,
   SidebarInset,
+  SidebarFooter,
 } from '@/components/ui/sidebar';
 import { EditorSidebar } from '@/components/features/EditorSidebar';
 import { WebsitePreview } from '@/components/features/WebsitePreview';
@@ -15,6 +17,10 @@ import { CustomDomainDialog } from '@/components/features/CustomDomainDialog';
 import type { WebsiteContent, GenerateWebsiteParams } from '@/lib/types';
 import { generateWebsiteAction } from '@/app/actions';
 import { useToast } from '@/hooks/use-toast';
+import { Button } from '@/components/ui/button';
+import { signOutUser } from '@/services/auth';
+import { useRouter } from 'next/navigation';
+import { LogOut } from 'lucide-react';
 
 export default function Home() {
   const [websiteContent, setWebsiteContent] = useState<WebsiteContent | null>(
@@ -22,6 +28,7 @@ export default function Home() {
   );
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
+  const router = useRouter();
 
   const handleGenerateWebsite = async (params: GenerateWebsiteParams) => {
     setLoading(true);
@@ -50,6 +57,11 @@ export default function Home() {
     setWebsiteContent(newContent);
   }
 
+  const handleSignOut = async () => {
+    await signOutUser();
+    router.push('/login');
+  }
+
   return (
     <SidebarProvider>
       <Sidebar>
@@ -62,6 +74,12 @@ export default function Home() {
             loading={loading}
           />
         </SidebarContent>
+        <SidebarFooter>
+            <Button variant="ghost" className="w-full justify-start" onClick={handleSignOut}>
+                <LogOut className="mr-2" />
+                Sign Out
+            </Button>
+        </SidebarFooter>
       </Sidebar>
       <SidebarInset>
         <header className="sticky top-0 z-10 flex h-16 items-center justify-between border-b bg-background/80 px-4 backdrop-blur-sm sm:px-6">

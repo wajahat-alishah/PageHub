@@ -1,3 +1,4 @@
+
 'use client';
 import {
   Dialog,
@@ -19,14 +20,14 @@ export function CustomDomainDialog() {
       <DialogTrigger asChild>
         <Button variant="outline">
           <Globe className="mr-2" />
-          Custom Domain
+          Publish
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle className="font-headline">Add Custom Domain</DialogTitle>
+          <DialogTitle className="font-headline">Publish your Website</DialogTitle>
           <DialogDescription>
-            Connect your own domain to your PageHub project.
+            Connect your own domain to publish your PageHub project.
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
@@ -42,7 +43,7 @@ export function CustomDomainDialog() {
           </div>
         </div>
         <DialogFooter>
-          <Button type="submit">Save changes</Button>
+          <Button type="submit">Save and Publish</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
