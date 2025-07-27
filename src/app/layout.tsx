@@ -4,15 +4,6 @@
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster"
 import { AuthProvider } from '@/hooks/use-auth';
-import { usePathname } from 'next/navigation';
-import MainLayout from './(main)/layout';
-
-
-// export const metadata: Metadata = {
-//   title: 'PageHub',
-//   description: 'Generate beautiful websites with AI',
-//   manifest: '/manifest.json',
-// };
 
 export default function RootLayout({
   children,
@@ -38,7 +29,9 @@ export default function RootLayout({
         <meta name="theme-color" content="#000000" />
       </head>
       <body className="font-body antialiased" suppressHydrationWarning>
-        {children}
+        <AuthProvider>
+          {children}
+        </AuthProvider>
         <Toaster />
       </body>
     </html>

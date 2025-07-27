@@ -1,3 +1,4 @@
+
 'use client';
 import { useState } from 'react';
 import {
@@ -8,6 +9,9 @@ import {
   SidebarTrigger,
   SidebarInset,
   SidebarFooter,
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarMenuButton,
 } from '@/components/ui/sidebar';
 import { EditorSidebar } from '@/components/features/EditorSidebar';
 import { WebsitePreview } from '@/components/features/WebsitePreview';
@@ -16,6 +20,8 @@ import { CustomDomainDialog } from '@/components/features/CustomDomainDialog';
 import type { WebsiteContent, GenerateWebsiteParams } from '@/lib/types';
 import { generateWebsiteAction } from '@/app/actions';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/hooks/use-auth';
+import { LogOut } from 'lucide-react';
 
 export default function Home() {
   const [websiteContent, setWebsiteContent] = useState<WebsiteContent | null>(
@@ -23,6 +29,7 @@ export default function Home() {
   );
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
+  const { signOut } = useAuth();
 
   const handleGenerateWebsite = async (params: GenerateWebsiteParams) => {
     setLoading(true);
@@ -64,6 +71,14 @@ export default function Home() {
           />
         </SidebarContent>
         <SidebarFooter>
+           <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton onClick={signOut}>
+                <LogOut />
+                Sign Out
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
         </SidebarFooter>
       </Sidebar>
       <SidebarInset>
