@@ -58,7 +58,7 @@ export function EditorSidebar({ onGenerate, loading }: EditorSidebarProps) {
     resolver: zodResolver(formSchema),
     defaultValues: {
       prompt: '',
-      sections: ['hero', 'features', 'footer'],
+      sections: ['header', 'hero', 'features', 'cta', 'footer'],
       parallax: true,
     },
   });
