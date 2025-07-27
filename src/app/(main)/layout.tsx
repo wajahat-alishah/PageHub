@@ -23,17 +23,18 @@ export default function MainLayout({
   if (loading) {
     return (
       <div className="flex h-screen w-full items-center justify-center">
-        <div className="space-y-4">
+        <div className="flex flex-col items-center space-y-4">
             <Skeleton className="h-12 w-12 rounded-full" />
             <Skeleton className="h-4 w-[250px]" />
             <Skeleton className="h-4 w-[200px]" />
+            <p className="text-muted-foreground">Authenticating...</p>
         </div>
       </div>
     );
   }
 
   if (!user) {
-    return null; // or a redirect component
+    return null; // or a redirect component, router push handles it
   }
 
   return <>{children}</>;
