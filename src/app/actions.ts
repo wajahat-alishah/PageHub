@@ -7,43 +7,53 @@ import { inlineAIEdit } from '@/ai/flows/inline-ai-edit';
 import type { WebsiteContent, GenerateWebsiteParams } from '@/lib/types';
 
 function parseRawContent(rawContent: string, sections: string[]): { title: string, content: string, type: string }[] {
+  if (!rawContent) return [];
+  
   const parsedSections: { title: string, content: string, type: string }[] = [];
+  const lines = rawContent.split('\n');
   
-  // Create a flexible regex to find sections based on markdown headers
-  // It handles variations in whitespace and case-insensitivity for section names
-  const sectionHeaders = sections.map(s => s.replace(/ /g, '\\s*')).join('|');
-  const regex = new RegExp(`^#+\\s*(${sectionHeaders})\\s*\\n`, 'gim');
-  
-  const parts = rawContent.split(regex);
+  let currentSection: { title: string, content: string, type: string } | null = null;
 
-  if (parts.length < 3) { // Not split, treat as single section
-      const firstLineEnd = rawContent.indexOf('\n');
-      const title = firstLineEnd !== -1 ? rawContent.substring(0, firstLineEnd).replace(/^#+\s*/, '') : 'Hero';
-      const content = firstLineEnd !== -1 ? rawContent.substring(firstLineEnd + 1) : rawContent;
-      return [{ title, content, type: 'hero' }];
-  }
+  for (const line of lines) {
+    const trimmedLine = line.trim();
+    const isHeader = trimmedLine.startsWith('#');
 
-  // The first part is usually content before the first recognized section header, often a hero
-  if (parts[0].trim()) {
-     const heroContent = parts[0].trim();
-     const firstLineEnd = heroContent.indexOf('\n');
-     const title = firstLineEnd !== -1 ? heroContent.substring(0, firstLineEnd).replace(/^#+\s*/, '') : 'Hero';
-     const content = firstLineEnd !== -1 ? heroContent.substring(firstLineEnd + 1).trim() : heroContent;
-     parsedSections.push({title, content, type: 'hero'});
-  }
-  
-  for (let i = 1; i < parts.length; i += 2) {
-    const type = parts[i].trim().toLowerCase().replace(/\s/g, '-');
-    const content = parts[i+1]?.trim() || '';
-    if (content) {
-      parsedSections.push({
-        title: parts[i].trim(),
-        content: content,
-        type: type,
-      });
+    if (isHeader) {
+      if (currentSection) {
+        // Save previous section
+        currentSection.content = currentSection.content.trim();
+        parsedSections.push(currentSection);
+      }
+      // Start new section
+      const title = trimmedLine.replace(/^#+\s*/, '').trim();
+      const type = title.toLowerCase().replace(/\s+/g, '-');
+      currentSection = { title, type, content: '' };
+    } else if (currentSection) {
+      currentSection.content += line + '\n';
+    } else {
+      // Content before any header, treat as hero
+      const title = 'Hero';
+      currentSection = { title, type: 'hero', content: line + '\n' };
     }
   }
 
+  // Add the last section
+  if (currentSection) {
+    currentSection.content = currentSection.content.trim();
+    if(currentSection.content || parsedSections.length === 0){ // Add if it has content, or if it's the only section
+        parsedSections.push(currentSection);
+    }
+  }
+
+  // Fallback if parsing fails to produce anything
+  if (parsedSections.length === 0 && rawContent.trim()) {
+    parsedSections.push({
+        title: 'Content',
+        type: 'hero',
+        content: rawContent.trim()
+    });
+  }
+  
   return parsedSections;
 }
 
