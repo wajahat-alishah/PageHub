@@ -34,12 +34,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => unsubscribe();
   }, []);
 
+  const handleSignOut = async () => {
+    await logout();
+    // Force a redirect to the login page
+    window.location.href = '/login';
+  };
+
   const value = {
     user,
     loading,
     login,
     signup,
-    signOut: logout,
+    signOut: handleSignOut,
   };
 
   return (
