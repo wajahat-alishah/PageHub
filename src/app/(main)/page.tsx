@@ -8,16 +8,13 @@ import {
   SidebarTrigger,
   SidebarInset,
 } from '@/components/ui/sidebar';
-import { Button } from '@/components/ui/button';
 import { EditorSidebar } from '@/components/features/EditorSidebar';
 import { WebsitePreview } from '@/components/features/WebsitePreview';
 import { PageHubLogo } from '@/components/shared/PageHubLogo';
 import { CustomDomainDialog } from '@/components/features/CustomDomainDialog';
 import type { WebsiteContent, GenerateWebsiteParams } from '@/lib/types';
-import { generateWebsiteAction, rewriteTextAction } from '@/app/actions';
+import { generateWebsiteAction } from '@/app/actions';
 import { useToast } from '@/hooks/use-toast';
-import { Wand2 } from 'lucide-react';
-
 
 export default function Home() {
   const [websiteContent, setWebsiteContent] = useState<WebsiteContent | null>(
