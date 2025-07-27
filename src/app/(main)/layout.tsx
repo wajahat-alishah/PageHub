@@ -15,27 +15,25 @@ export default function MainLayout({
   const router = useRouter();
 
   useEffect(() => {
+    // We only want to redirect if loading is complete and there's no user.
     if (!loading && !user) {
       router.push('/login');
     }
   }, [user, loading, router]);
 
-  if (loading) {
+  // While loading, or if there's no user yet (and we're about to redirect),
+  // show a loading screen. This prevents the redirect loop.
+  if (loading || !user) {
     return (
-      <div className="flex h-screen w-full items-center justify-center">
+      <div className="flex h-screen w-full items-center justify-center bg-background">
         <div className="flex flex-col items-center space-y-4">
-            <Skeleton className="h-12 w-12 rounded-full" />
-            <Skeleton className="h-4 w-[250px]" />
-            <Skeleton className="h-4 w-[200px]" />
-            <p className="text-muted-foreground">Authenticating...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+          <p className="text-muted-foreground">Authenticating...</p>
         </div>
       </div>
     );
   }
 
-  if (!user) {
-    return null; // or a redirect component, router push handles it
-  }
-
+  // If loading is complete and we have a user, render the children.
   return <>{children}</>;
 }
