@@ -23,7 +23,7 @@ export default function RootLayout({
   const isAuthPage = pathname.startsWith('/login') || pathname.startsWith('/signup');
 
   return (
-    <html lang="en" className="dark" suppressHydrationWarning>
+    <html lang="en" className="dark">
       <head>
         <title>PageHub</title>
         <meta name="description" content="Generate beautiful websites with AI" />
@@ -40,7 +40,7 @@ export default function RootLayout({
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="theme-color" content="#000000" />
       </head>
-      <body className="font-body antialiased">
+      <body className="font-body antialiased" suppressHydrationWarning>
         <AuthProvider>
             {isAuthPage ? (
                 children
