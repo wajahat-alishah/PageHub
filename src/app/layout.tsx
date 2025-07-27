@@ -1,24 +1,33 @@
 
-import type {Metadata} from 'next';
+'use client';
+
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster"
 import { AuthProvider } from '@/hooks/use-auth';
+import { usePathname } from 'next/navigation';
+import MainLayout from './(main)/layout';
 
 
-export const metadata: Metadata = {
-  title: 'PageHub',
-  description: 'Generate beautiful websites with AI',
-  manifest: '/manifest.json',
-};
+// export const metadata: Metadata = {
+//   title: 'PageHub',
+//   description: 'Generate beautiful websites with AI',
+//   manifest: '/manifest.json',
+// };
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const pathname = usePathname();
+  const isAuthPage = pathname.startsWith('/login') || pathname.startsWith('/signup');
+
   return (
     <html lang="en" className="dark">
       <head>
+        <title>PageHub</title>
+        <meta name="description" content="Generate beautiful websites with AI" />
+        <meta name="manifest" content="/manifest.json" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet" />
@@ -33,7 +42,11 @@ export default function RootLayout({
       </head>
       <body className="font-body antialiased">
         <AuthProvider>
-          {children}
+            {isAuthPage ? (
+                children
+            ) : (
+                <MainLayout>{children}</MainLayout>
+            )}
           <Toaster />
         </AuthProvider>
       </body>
