@@ -1,6 +1,6 @@
 'use client';
 
-import { useForm, Controller } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
@@ -8,6 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Input } from '@/components/ui/input';
 import {
   Form,
   FormControl,
@@ -17,7 +18,8 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { Loader2, Wand2 } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Loader2, Wand2, FileText, Pilcrow } from 'lucide-react';
 import type { GenerateWebsiteParams } from '@/lib/types';
 
 const sections = [
@@ -30,14 +32,19 @@ const sections = [
 ];
 
 const formSchema = z.object({
-  prompt: z.string().min(10, 'Please enter a prompt of at least 10 characters.'),
+  prompt: z.string().optional(),
+  file: z.instanceof(File).optional(),
   sections: z
     .array(z.string())
     .refine((value) => value.some((item) => item), {
       message: 'You have to select at least one section.',
     }),
   parallax: z.boolean().default(true),
+}).refine(data => !!data.prompt || !!data.file, {
+    message: "Either a prompt or a file is required.",
+    path: ["prompt"], // you can use any field name here
 });
+
 
 type EditorSidebarProps = {
   onGenerate: (params: GenerateWebsiteParams) => void;
@@ -54,8 +61,23 @@ export function EditorSidebar({ onGenerate, loading }: EditorSidebarProps) {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    onGenerate(values);
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    let finalPrompt = values.prompt || '';
+    if (values.file) {
+        try {
+            finalPrompt = await values.file.text();
+        } catch (e) {
+            form.setError('file', { type: 'manual', message: 'Could not read the file.' });
+            return;
+        }
+    }
+    
+    if (!finalPrompt) {
+        form.setError('prompt', { type: 'manual', message: 'A prompt is required if no file is uploaded.' });
+        return;
+    }
+
+    onGenerate({ ...values, prompt: finalPrompt });
   }
 
   return (
@@ -65,28 +87,60 @@ export function EditorSidebar({ onGenerate, loading }: EditorSidebarProps) {
         className="flex h-full flex-col"
       >
         <div className="flex-1 space-y-6 overflow-y-auto p-4">
-          <FormField
-            control={form.control}
-            name="prompt"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="font-headline text-base">
-                  Your Website Idea
-                </FormLabel>
-                <FormControl>
-                  <Textarea
-                    placeholder="e.g., A landing page for a new AI-powered photo editing app"
-                    className="min-h-[120px] resize-none"
-                    {...field}
-                  />
-                </FormControl>
-                <FormDescription>
-                  Describe your vision in a few sentences.
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <Tabs defaultValue="prompt" className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="prompt"><Pilcrow className="mr-2" />Prompt</TabsTrigger>
+              <TabsTrigger value="file"><FileText className="mr-2"/>File</TabsTrigger>
+            </TabsList>
+            <TabsContent value="prompt">
+                <FormField
+                    control={form.control}
+                    name="prompt"
+                    render={({ field }) => (
+                    <FormItem className="mt-4">
+                        <FormLabel className="font-headline text-base">
+                        Your Website Idea
+                        </FormLabel>
+                        <FormControl>
+                        <Textarea
+                            placeholder="e.g., A landing page for a new AI-powered photo editing app"
+                            className="min-h-[120px] resize-none"
+                            {...field}
+                        />
+                        </FormControl>
+                        <FormDescription>
+                        Describe your vision in a few sentences.
+                        </FormDescription>
+                        <FormMessage />
+                    </FormItem>
+                    )}
+                />
+            </TabsContent>
+            <TabsContent value="file">
+                <FormField
+                    control={form.control}
+                    name="file"
+                    render={({ field: { onChange, value, ...rest }}) => (
+                    <FormItem className="mt-4">
+                        <FormLabel className="font-headline text-base">Upload a file</FormLabel>
+                        <FormControl>
+                            <Input 
+                                type="file" 
+                                accept=".txt,.md"
+                                onChange={(e) => onChange(e.target.files ? e.target.files[0] : null)} 
+                                {...rest}
+                            />
+                        </FormControl>
+                        <FormDescription>
+                            Upload a text or markdown file to use as the prompt.
+                        </FormDescription>
+                        <FormMessage />
+                    </FormItem>
+                    )}
+                />
+            </TabsContent>
+          </Tabs>
+          
 
           <FormField
             control={form.control}
