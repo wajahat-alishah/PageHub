@@ -14,14 +14,19 @@ export default function MainLayout({
   const router = useRouter();
 
   useEffect(() => {
-    // We only want to redirect if loading is complete and there's no user.
+    // This effect handles redirection.
+    // It will only run when the loading state changes.
+    // If loading is finished (!loading) and there is no user, then redirect.
     if (!loading && !user) {
       router.push('/login');
     }
   }, [user, loading, router]);
 
-  // While loading, or if there's no user yet (and we're about to redirect),
-  // show a loading screen. This prevents the redirect loop.
+  // This is the crucial part. 
+  // We show a loading indicator as long as the authentication is in progress (loading)
+  // OR if there is no user. If there's no user, the useEffect above will trigger the redirect.
+  // This prevents the children from rendering prematurely and causing a flash of content
+  // before the redirect can happen.
   if (loading || !user) {
     return (
       <div className="flex h-screen w-full items-center justify-center bg-background">
@@ -33,6 +38,6 @@ export default function MainLayout({
     );
   }
 
-  // If loading is complete and we have a user, render the children.
+  // If loading is complete and we have a user, then we can safely render the page content.
   return <>{children}</>;
 }
