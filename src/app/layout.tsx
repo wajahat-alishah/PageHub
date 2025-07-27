@@ -19,11 +19,8 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const pathname = usePathname();
-  const isAuthPage = pathname.startsWith('/login') || pathname.startsWith('/signup');
-
   return (
-    <html lang="en" className="dark">
+    <html lang="en" className="dark" suppressHydrationWarning>
       <head>
         <title>PageHub</title>
         <meta name="description" content="Generate beautiful websites with AI" />
@@ -41,14 +38,8 @@ export default function RootLayout({
         <meta name="theme-color" content="#000000" />
       </head>
       <body className="font-body antialiased" suppressHydrationWarning>
-        <AuthProvider>
-            {isAuthPage ? (
-                children
-            ) : (
-                <MainLayout>{children}</MainLayout>
-            )}
-          <Toaster />
-        </AuthProvider>
+        {children}
+        <Toaster />
       </body>
     </html>
   );
